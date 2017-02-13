@@ -3,7 +3,7 @@ import cv2
 
 #pathSoko = "D:\soft\level-2\\video-0.avi"
 
-pathBera = "C:\\Users\\Marko Bera\\Desktop\\SOFT\\level-2\\video-0.avi"
+pathBera = "..\\res\\video-0.avi"
 
 cap = cv2.VideoCapture(pathBera)
 while(cap.isOpened()):
