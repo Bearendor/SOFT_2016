@@ -67,6 +67,7 @@ for i in (0, 2):
 
     yarray.append(rez)
     cap.release()
+    cv2.destroyAllWindows()
 
 data = np.array([xarray, yarray])
 data = data.T
