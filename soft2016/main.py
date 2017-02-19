@@ -3,48 +3,55 @@ import cv2
 import number_detection as nd
 from cnn.mnist import Mnist
 
-cap = cv2.VideoCapture('data/video-2.avi')
-rez = 0
-broj = 0
-dodaj = 0
-pomocni_broj = 0
+ime = 'data/video-'
+ext = '.avi'
+xarray = ["RA 43/2012", "file"]
+yarray = ["Ivan Sredojevic", "sum"]
+out_path = 'result/out.txt'
+out = open(out_path, 'w+')
 
-while(cap.isOpened()):
-    ret, frame = cap.read()
+for i in (0, 2):
 
-    m = Mnist()
-    sums = []
+    naziv = ime + `i` + ext
 
-    ret, numbers = nd.find_numbers(frame)
-    for number in numbers:
-        broj = m.predict_number(number)
-        sums.append(m.predict_number(number))
+    xarray.append(naziv)
 
-    
-    if ((broj - sum(sums)) < 0):
-        rez += 0
-    elif (sum(sums) == 0):
-        dodaj = 0
-        rez += 0
-    elif ((broj - sum(sums)) == 0 and dodaj == 0):
-        dodaj = 1
-        rez += broj
-        pomocni_broj = sum(sums)
+    cap = cv2.VideoCapture(naziv)
+    rez = 0
+    broj = 0
+    dodaj = 0
+    pomocni_broj = 0
 
-    if pomocni_broj != sum(sums) and dodaj == 1:
-        rez += broj
-        dodaj = 0
+    while(cap.isOpened()):
+        ret, frame = cap.read()
+        m = Mnist()
+        sums = []
 
+        ret, numbers = nd.find_numbers(frame)
+        for number in numbers:
+            broj = m.predict_number(number)
+            sums.append(m.predict_number(number))
 
+        if ((broj - sum(sums)) < 0):
+            rez += 0
+        elif (sum(sums) == 0):
+            dodaj = 0
+            rez += 0
+        elif ((broj - sum(sums)) == 0 and dodaj == 0):
+            dodaj = 1
+            rez += broj
+            pomocni_broj = sum(sums)
 
-    print "RESULT: {}".format(sum(sums)) +"  "+"POM  "+ str(pomocni_broj)
-    print "BROJ   "  + str(broj)
-    print "Rezultat  " + str(rez)
-    cv2.imshow('frame', frame)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
+        if pomocni_broj != sum(sums) and dodaj == 1:
+            rez += broj
+            dodaj = 0
 
-
+        print "RESULT: {}".format(sum(sums)) +"  "+"POM  "+ str(pomocni_broj)
+        print "BROJ   "  + str(broj)
+        print "Rezultat  " + str(rez)
+        cv2.imshow('frame', frame)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
 
 # frame = cv2.imread("test/test.png")
 # m = Mnist()
@@ -58,5 +65,13 @@ while(cap.isOpened()):
 #     nd.display_image(number)
 # print "RESULT: {0}".format(sum(sums))
 
-cap.release()
+    yarray.append(rez)
+    cap.release()
+
+data = np.array([xarray, yarray])
+data = data.T
+#transponujemo niz da ga imamo u dve kolone
+
+np.savetxt(out, data, fmt=['%s', '%s'])
+
 cv2.destroyAllWindows()
